@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Query</title>
+    <link rel="shortcut icon" href="icon.png" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(165, 165, 165, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(145, 145, 145, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(186, 186, 186, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .logo {
+            margin-bottom: 50px;
+            position: relative;
+            animation: logoFloat 3s ease-in-out infinite;
+            text-align: center;
+        }
+        @keyframes logoFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        .logo-text {
+            font-size: 96px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #bababa 0%, #a5a5a5 50%, #919191 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 10px 30px rgba(165, 165, 165, 0.3));
+            transition: filter 0.3s ease;
+            letter-spacing: -2px;
+        }
+        .logo:hover .logo-text {
+            filter: drop-shadow(0 15px 40px rgba(186, 186, 186, 0.5));
+        }
+        .logo-slogan {
+            font-size: 18px;
+            color: #a5a5a5;
+            margin-top: 10px;
+            letter-spacing: 2px;
+            font-weight: 300;
+            opacity: 0.8;
+        }
+        .logo::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(165, 165, 165, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        .search-wrapper {
+            position: relative;
+            width: 700px;
+            max-width: 90vw;
+        }
+        .search-box {
+            width: 100%;
+            position: relative;
+        }
+        .search-box::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #919191, #a5a5a5, #bababa, #a5a5a5, #919191);
+            background-size: 300% 300%;
+            border-radius: 30px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: gradientShift 3s ease infinite;
+            z-index: -1;
+        }
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        .search-box:focus-within::before {
+            opacity: 1;
+        }
+        .input-container {
+            width: 100%;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 18px 24px;
+            border: 2px solid #3a3a3a;
+            border-radius: 28px;
+            font-size: 17px;
+            outline: none;
+            background: rgba(42, 42, 42, 0.8);
+            backdrop-filter: blur(10px);
+            color: #e0e0e0;
+            transition: all 0.3s ease;
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.3),
+                0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .search-box input::placeholder {
+            color: #707070;
+        }
+        .search-box input:focus {
+            border-color: #a5a5a5;
+            background: rgba(50, 50, 50, 0.9);
+            box-shadow: 
+                inset 0 2px 10px rgba(0, 0, 0, 0.3),
+                0 0 30px rgba(165, 165, 165, 0.6),
+                0 0 60px rgba(165, 165, 165, 0.4),
+                0 0 90px rgba(165, 165, 165, 0.2),
+                0 0 0 4px rgba(165, 165, 165, 0.1);
+            transform: translateY(-2px);
+        }
+        .search-box button {
+            padding: 18px 42px;
+            background: linear-gradient(135deg, #919191 0%, #a5a5a5 50%, #919191 100%);
+            background-size: 200% 200%;
+            color: #ffffff;
+            border: 2px solid #6a6a6a;
+            border-radius: 28px;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 20px rgba(165, 165, 165, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.5px;
+        }
+        .search-box button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        .search-box button:hover::before {
+            left: 100%;
+        }
+        .search-box button:hover {
+            background-position: 100% 0;
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 30px rgba(165, 165, 165, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            border-color: #bababa;
+        }
+        .search-box button:active {
+            transform: translateY(-1px);
+            box-shadow: 
+                0 4px 15px rgba(165, 165, 165, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        .decorative-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(165, 165, 165, 0.3), transparent);
+            height: 1px;
+        }
+        .line:nth-child(1) {
+            top: 20%;
+            left: -100%;
+            width: 40%;
+            animation: lineMove1 8s ease-in-out infinite;
+        }
+        .line:nth-child(2) {
+            top: 60%;
+            right: -100%;
+            width: 50%;
+            animation: lineMove2 10s ease-in-out infinite;
+        }
+        .line:nth-child(3) {
+            top: 80%;
+            left: -100%;
+            width: 35%;
+            animation: lineMove1 12s ease-in-out infinite;
+        }
+        @keyframes lineMove1 {
+            0%, 100% {
+                left: -100%;
+            }
+            50% {
+                left: 100%;
+            }
+        }
+        @keyframes lineMove2 {
+            0%, 100% {
+                right: -100%;
+            }
+            50% {
+                right: 100%;
+            }
+        }
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(186, 186, 186, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(186, 186, 186, 0.8);
+        }
+        .particle:nth-child(1) {
+            top: 15%;
+            left: 10%;
+            animation: float 6s ease-in-out infinite;
+        }
+        .particle:nth-child(2) {
+            top: 75%;
+            left: 85%;
+            animation: float 8s ease-in-out infinite 1s;
+        }
+        .particle:nth-child(3) {
+            top: 45%;
+            left: 15%;
+            animation: float 7s ease-in-out infinite 2s;
+        }
+        .particle:nth-child(4) {
+            top: 25%;
+            left: 80%;
+            animation: float 9s ease-in-out infinite 1.5s;
+        }
+        .particle:nth-child(5) {
+            top: 85%;
+            left: 25%;
+            animation: float 10s ease-in-out infinite 0.5s;
+        }
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-30px) translateX(20px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="decorative-lines">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+    </div>
+    
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <div class="logo-text">Query</div>
+            <div class="logo-slogan">SEARCH SMARTER</div>
+        </div>
+        
+        <div class="search-wrapper">
+            <div class="search-box">
+                <div class="input-container">
+                    <input type="text" id="searchInput" placeholder="Search the web..." autofocus>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+            
+            const encodedQuery = encodeURIComponent(query);
+            window.location.href = `search.html?q=${encodedQuery}`;
+        }
+    </script>
+</body>
+</html>

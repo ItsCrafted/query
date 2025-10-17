@@ -1,0 +1,15 @@
+{
+  "name": "query",
+  "version": "1.0.0",
+  "description": "A better way to search",
+  "scripts": {
+    "dev": "netlify dev", 
+    "build": "echo \"No build step\"",
+    "start": "netlify dev",
+    "lint": "eslint ."
+  },
+  "author": "crafted",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
